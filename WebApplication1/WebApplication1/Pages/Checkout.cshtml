@@ -1,0 +1,270 @@
+﻿@page
+@model CheckoutModel
+@using System.Xml.Schema
+@using static AddKeyModel
+@{
+    float totalz = 0;
+}
+<script src="https://www.paypalobjects.com/api/checkout.js"></script>
+<script>
+    // Render the PayPal button
+    paypal.Button.render({
+        // Set your environment
+        env: 'sandbox', // sandbox | production
+
+        // Specify the style of the button
+        style: {
+            layout: 'horizontal',  // horizontal | vertical
+            size: 'medium',    // medium | large | responsive
+            shape: 'rect',      // pill | rect
+            color: 'gold',
+            fundingicons: false
+        },
+
+        // Specify allowed and disallowed funding sources
+        //
+        // Options:
+        // - paypal.FUNDING.CARD
+        // - paypal.FUNDING.CREDIT
+        // - paypal.FUNDING.ELV
+        funding: {
+            allowed: [
+                paypal.FUNDING.CARD,
+                //paypal.FUNDING.CREDIT
+            ],
+            disallowed: []
+        },
+
+        // PayPal Client IDs - replace with your own
+        // Create a PayPal app: https://developer.paypal.com/developer/applications/create
+        client: {
+            sandbox: 'AbkpTYViWloGJrvvueH7VjvKdO48IELUV2kZBk2lxTkaCIswmeuZ0MziHWpS21xM5P4vyqW8Uu8r83xF',
+            production: '<insert production client id>'
+        },
+
+        payment: function (data, actions) {
+            var totaal = document.getElementById('Subtotal').innerHTML.replace(',', '.');
+            return actions.payment.create({
+                payment: {
+                    transactions: [
+                        {
+                            amount: {
+                                total: '0.01',
+                                currency: 'EUR'
+                            }
+                        }
+                    ]
+                }
+            });
+        },
+
+        onAuthorize: function (data, actions) {
+            return actions.payment.execute()
+                .then(function () {
+                    window.alert('Payment Complete!');
+                    document.getElementById("aform").submit();
+                });
+        }
+    }, '#paypal-button-container');
+</script>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Checkout</h2>
+        </div>
+        @*@if (Model.YourCart == null)
+            {
+                <br />
+                <h6>Oops! Your Cart is empty!</h6>
+                return;
+            }*@
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                    @foreach (var item in Model._Products)
+                    {
+                        totalz += (item.product.PriceFinal * item.quantity);
+                        
+
+                        <tr>
+                            <td>@item.product.ResponseName</td>
+                            <td>@(item.product.PriceFinal * item.quantity)</td>
+                            <td>@item.quantity</td>
+
+                        </tr>
+                    }
+            </tbody>
+        </table>
+    </div>
+    <div class="row" style="padding-top:50px;">
+
+        @if (User.Identity.IsAuthenticated && Model._User.TPunten >= 0)
+        {
+        <div class="col-md-6">
+
+
+            <h2 class="text-center"> Grab your discount!</h2><hr />
+
+            <p class="text-center">Spend your saved diamonds for a discount!</p>
+            <p style="text-align:center; margin: 0 auto; font-size:14px; padding-bottom:10px;"> Your points amount: @Model._User.TPunten</p>
+
+                <form asp-page="AddKey" method="post" asp-page-handler="AddKey" id="aform">
+
+                    <input type="hidden" name="email" value="@Model.EmailKey.Email" />
+                    <input type="hidden" name="firstname" value="@Model.EmailKey.Firstname" />
+                    <input type="hidden" name="lastname" value="@Model.EmailKey.Lastname" />
+
+                    <select id="PointsSpend" name="PointsSpend" onchange="UpdatePoints()" class="form-control" style="width:50%; margin:0 auto;">
+                        @for (int j = 0; j <= 1000; j += 100)
+                        {
+                            double Discount = Math.Round((Math.Pow(j + totalz, 1.8) / 1000) * 100) / 100;
+                            double PercentDiscount = (Discount / totalz) * 100;
+
+                            if (Model._User.TPunten >= j && PercentDiscount <= 118)
+                            {
+                                <option value="@j">@j</option>
+                            }
+                        }
+                    </select>
+                </form>
+                <br />
+            <p style="border-bottom:1px solid #e5e5e5;  line-height:0.1em; margin:10px 0 20px;  text-align:center;"><span style=" background:#fff; padding:0 10px; ">or</span></p>
+            <p class="text-center">Spend your saved diamonds for exclusive products!</p>
+            <div class="text-center">
+                @if (Model._User.TPunten >= 100)
+                {
+                <a  class="btn btn-outline-primary" asp-page="Diamondshop" style=" margin-bottom:30px;" >
+                    Open the diamond shop
+                </a>
+                }
+                else
+                {
+                    
+                        <a asp-page="Diamondshop" class="btn btn-outline-primary"  style="text-transform:none; pointer-events:none ; margin-bottom:30px;" disabled >
+                            Open the diamond shop (after 100 points)
+                        </a>
+                        
+
+                        }
+
+                </div>
+
+        </div>
+
+            <script>
+                function UpdatePoints() {
+
+                    var PointsSpend = parseInt(document.getElementById("PointsSpend").value);
+                    var Total = parseFloat("@totalz.ToString()");
+
+                    var Discount = Math.round(((Math.pow((PointsSpend), 1.8) / 1000) * 100) / 100);
+                    var Total = Math.round((Total - Discount) * 100) / 100;
+
+                    if (PointsSpend == 0) {
+                        document.getElementById("Discount").innerHTML = 0;
+                    } else {
+                        document.getElementById("Discount").innerHTML = Discount+1;
+                    }
+
+                    if (PointsSpend != 0) {
+                        document.getElementById("Subtotal").innerHTML = Total;
+                    }
+                    else {
+                        document.getElementById("Subtotal").innerHTML = "@totalz";
+                    }
+                }
+            </script>
+        }
+        else
+        {
+            <form asp-page="AddKey" method="post" asp-page-handler="AddKey" id="aform">
+
+                <input type="hidden" name="email" value="@Model.EmailKey.Email" />
+                <input type="hidden" name="firstname" value="@Model.EmailKey.Firstname" />
+                <input type="hidden" name="lastname" value="@Model.EmailKey.Lastname" />
+            </form>
+        }
+
+        <div class="col-md-6" style="padding-bottom: 10px">
+            <h2>Order summary</h2>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <td>@totalz</td>
+                    </tr>
+                    <tr>
+                        <th>Discount</th>
+                        <td> <div id="Discount">0</div></td>
+                    </tr>
+                    <tr>
+                        <th>Subtotal</th>
+                        <td> <div id="Subtotal">@totalz</div></td>
+                    </tr>
+                    <tr>
+                        <td><div id="paypal-button-container"></div></td>
+                        <td>
+
+                            <a class="btn btn-primary float-right" asp-page="ShoppingCart" id="Cart_Checkout">Return to cart</a>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+    @*@if (!User.Identity.IsAuthenticated)
+        {
+            <div class="form-group">
+                <label asp-for="Input.Email"></label>
+                <input asp-for="Input.Email" class="form-control" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+        }*@
+
+</div>
+
+<style>
+    .container {
+        margin-top: 1.5em;
+    }
+
+    .border {
+        border-width: 1px !important
+    }
+
+    paypal-button-logo-color-black{
+        display:none !important;
+    }
+
+.floating {
+    animation-name: floating;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    margin-left: 30px;
+    margin-top: 5px;
+}
+
+@@keyframes floating {
+    from { transform: translate(0,  0px); }
+    65%  { transform: translate(0, 15px); }
+    to   { transform: translate(0, -0px); }
+}
+
+
+
+</style>
+
+
+
+

@@ -1,0 +1,35 @@
+﻿@page
+@model WebApplication1.Pages.Wishlist.DeleteItemWishListModel
+
+@{
+    ViewData["Title"] = "DeleteItemWishList";
+}
+
+<h2>DeleteItemWishList</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>User_Wishlist</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.User_Wishlist.Product)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.User_Wishlist.Product.ID)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.User_Wishlist.User)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.User_Wishlist.User.Id)
+        </dd>
+    </dl>
+    
+    <form method="post">
+        <input type="hidden" asp-for="User_Wishlist.User_ID" />
+        <input type="hidden" asp-for="User_Wishlist.Product_ID" />
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>

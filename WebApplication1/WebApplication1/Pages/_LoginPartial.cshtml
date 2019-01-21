@@ -1,0 +1,79 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using WebApplication1.Data
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <script src="/js/GetPoints.js"></script>
+    <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="navbar-right">
+        <div class="collapse navbar-collapse" id="navbar-primary">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" asp-page="/Diamondshop" id="NavFavs"> 💎 &nbsp;Diamond shop</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-page="/ShoppingCart" id="NavCart"> <i class="fas fa-shopping-cart"></i> &nbsp;Cart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-page="/Wishlist/Wishlist" id="NavFavs"> <i class="fas fa-heart"></i> &nbsp;Favorites</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user"></i>&nbsp;Profile</a>
+                    <ul class="dropdown-menu dropdown-menu-right ">
+                        <div class="dropdown-header" data-toggle="tab" href="#action">My profile</div>
+                        <a asp-page="/Account/Manage/Index" class="dropdown-item" id="NavProfile">My profile</a>
+                        <a asp-page="/orderhistory" class="dropdown-item" id="NavProfile">Order History</a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-page="/Admin/Admin" class="dropdown-item" id="NavAdmin">Admin</a>
+                        }
+                        <label class="btn btn-primary btn-lg btn-block" style="margin: 0 auto; border-radius: 0px;">
+                            <div id="DiamondPoints"></div>
+                            <script>GetPoints();</script>
+                        </label>
+
+                        <button class="btn btn-danger btn-lg btn-block" type="submit" style="margin:0 auto; border-radius:0px;"> Logout</button>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+
+    </form>
+}
+else
+{
+    <div class="collapse navbar-collapse" id="navbar-primary">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" asp-page="/ShoppingCart" id="NavCartNoLogin"> <i class="fas fa-shopping-cart"></i> &nbsp;Cart</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user"></i>&nbsp;Profile</a>
+                <ul class="dropdown-menu dropdown-menu-right ">
+                    <div class="dropdown-header" data-toggle="tab" href="#action">My profile</div>
+                    <a asp-page="/Account/Login" class="dropdown-item" id="NavLogin">Login</a>
+                    <a asp-page="/Account/Register" class="dropdown-item" id="NavRegister">Register</a>
+                    @*<div class="dropdown-header" data-toggle="tab">@Model._User.TPunten</div>*@
+
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <script>
+        function relocate_home() {
+            location.href = "Shoppingcart";
+        }
+    </script>
+}
+<style>
+
+
+    a {
+        font-weight: 600;
+        font-size: 1rem;
+    }
+</style>

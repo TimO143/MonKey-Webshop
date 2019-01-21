@@ -1,0 +1,93 @@
+﻿@page
+@model WebApplication1.Pages.FinishCheckoutModel
+@{
+    ViewData["Title"] = "FinishCheckout";
+}
+<body>
+
+    <div class="alert alert-success">Thanks, we've received your order! 😎</div>
+    <div class="container">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-9">
+                <section style="width:100%; text-align:center; margin:0 auto; padding-top:20px; padding-bottom:200px;">
+
+                    <h6 class="h3">Order placed</h6>
+
+
+                    <p>
+                        Thanks for shopping at Monkey. Your order information has been sent to your email address.
+                        Due to security reasons, your key(s) will be generated in the next 20 seconds:<br />
+                        <table style="width:100%;">
+                            <thead class="table"><tr><th>Product</th><th>Status</th><th>License</th></tr></thead>
+                            <tbody>
+                                @foreach (var item in Model.Key)
+                                {
+                                    
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Products.ResponseName)
+                                    </td>
+                                    <td class="text-warning" id="status">Processing</td>
+                                    <td class="text-info" id="">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</td>
+                                </tr>
+                                    }
+                                </tbody>
+                            </table><br /><br />
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                            <p>You can always retrieve your key(s) through your order history:</p><br />
+                            <a asp-page="Orderhistory" class="btn">Order History</a>
+
+                        }
+                        else
+                        {
+                            <a asp-page="Shopping" class="btn">Continue shopping</a>
+                        }
+                        </section>
+                    </div>
+                    <div class="col"></div>
+                </div>
+            </div>
+        </body>
+
+<script>
+
+
+
+    var myVar;
+    var ja = document.querySelectorAll(".text-warning");
+    var license = document.querySelectorAll(".text-info")
+
+    function intervalFunc() {
+        myVar = setInterval(changeColor, 1000);
+    }
+
+
+    function changeColor() {
+
+        for (i in ja) {
+            ja[i].className = 'text-success';
+            ja[i].innerHTML = 'Processed';
+        }
+
+       
+
+
+      @for (var i = 0; i < Model.Key.Count; i++){
+           <text>
+
+        /*for (i in license) {
+            console.log(license[i]);*/
+
+            license[@i].innerHTML = "@Model.Key[i].License";
+       // }
+        
+          </text>
+       }
+    }
+
+
+    setTimeout(function () { intervalFunc(); },10000);
+
+</script>

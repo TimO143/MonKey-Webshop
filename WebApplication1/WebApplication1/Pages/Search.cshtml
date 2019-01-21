@@ -1,0 +1,235 @@
+﻿@page
+@using Microsoft.EntityFrameworkCore
+@model WebApplication1.Pages.SearchModel
+@{
+    ViewData["Title"] = "Search";
+}
+
+<!---<h2>Search</h2>-->
+<div class="container">
+    <form method="get" asp-page-handler="page" onsubmit="return checkmin()">
+        <div class="row">
+            <div class="col-md-3">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Price</th>
+                    </tr>
+                    </thead>
+                </table>
+
+                    <table class="table">
+                        <input type="hidden" value="page" name="handler" />
+
+
+                        <article class="card-group-item">
+                            <div class="filter-content">
+                                <div class="card-body">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label>Min</label>
+                                            <input type="number" onchange="checkMinRealTime()" name="min" class="form-control" id="min" placeholder="€0" value="@(Model._Min != null ?  Model._Min : 0)" />
+                                        </div>
+                                        <div class="form-group col-md-6 text-right">
+                                            <label>Max</label>
+                                            <input type="number" onchange="checkMinRealTime()" name="max" class="form-control" id="max" placeholder="€0" value="@(Model._Max != null ? Model._Max : 0)">
+                                        </div>
+                                        <input type="hidden" value="@(!Model.Products_page.empty ? Model.Products_page.data.Index : 0) " name="page_index" />
+                                        <input type="hidden" value="@Model.page_size" name="page_size" />
+                                        <input type="hidden" value="@Model._searchquery" name="Search" />
+                                    </div>
+
+                                </div> <!-- card-body.// -->
+                            </div>
+                        </article> <!-- card-group-item.// -->
+                        <article class="card-group-item">
+                            <h6 class="title">Genres </h6>
+                            <div class="filter-content">
+                                <div class="card-body">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="Check1" name="Adventure" @((Model._Adventure == "1") ? "checked" : "") value="1">
+                                        <label class="custom-control-label" for="Check1">Adventure</label>
+                                    </div> <!-- form-check.// -->
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="Check2" name="Racing" @((Model._Racing == "1") ? "checked" : "") value="1">
+                                        <label class="custom-control-label" for="Check2">Racing</label>
+                                    </div> <!-- form-check.// -->
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="Check3" name="actie" @((Model._actie == "1") ? "checked" : "") value="1">
+                                        <label class="custom-control-label" for="Check3">Action</label>
+                                    </div> <!-- form-check.// -->
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="Check4" name="Multiplayer" @((Model._Multiplayer == "1") ? "checked" : "") value="1">
+                                        <label class="custom-control-label" for="Check4">Multiplayer</label>
+                                    </div> <!-- form-check.// -->
+                                </div> <!-- card-body.// -->
+                            </div>
+                            <input hidden type="text" value="" />
+                        </article>
+                        <button type="submit" class="btn btn-primary btn-sm btn-block" id="Search_FilterOut">Filter out </button>
+                    </table>
+
+                    @*<table class="table">
+                <thead>
+                    <tr>
+                        <th>Genres</th>
+                    </tr>
+                </thead>
+            </table>
+
+            <table>
+                <div class="custom-control custom-checkbox">
+                    <span class="float-right badge badge-light round">52</span>
+                    <input type="checkbox" class="custom-control-input" id="Check1">
+                    <label class="custom-control-label" for="Check1">Adventure</label>
+                </div> <!-- form-check.// -->
+                <div class="custom-control custom-checkbox">
+                    <span class="float-right badge badge-light round">52</span>
+                    <input type="checkbox" class="custom-control-input" id="Check2">
+                    <label class="custom-control-label" for="Check2">Racing</label>
+                </div> <!-- form-check.// -->
+                <div class="custom-control custom-checkbox">
+                    <span class="float-right badge badge-light round">52</span>
+                    <input type="checkbox" class="custom-control-input" id="Check3">
+                    <label class="custom-control-label" for="Check3">Shooter</label>
+                </div> <!-- form-check.// -->
+                <div class="custom-control custom-checkbox">
+                    <span class="float-right badge badge-light round">52</span>
+                    <input type="checkbox" class="custom-control-input" id="Check4">
+                    <label class="custom-control-label" for="Check4">Multiplayer</label>
+                </div> <!-- form-check.// -->
+            </table>*@
+            </div>
+
+            <div class="col-md-9">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th style="text-align:right;">
+                            Order by :
+                            <select aria-labelledby="dropdownMenuButton" name="order" id="Search_OrderByDropDown" onchange="this.form.submit()">
+                                @if (Model._order == "Price (High to low)")
+                                {
+                                    <option id="Search_Relevantie">Relevantie</option>
+                                    <option id="Search_HightoLow" selected>Price (High to low)</option>
+                                    <option id="Search_LowtoHigh">Price (Low to High)</option>
+                                } else if (Model._order == "Price (Low to High)")
+                                {
+                                    <option id="Search_Relevantie">Relevantie</option>
+                                    <option id="Search_HightoLow">Price (High to low)</option>
+                                    <option id="Search_LowtoHigh" selected>Price (Low to High)</option>
+                                }
+                                else
+                                {
+                                    <option id="Search_Relevantie" selected>Relevantie</option>
+                                    <option id="Search_HightoLow">Price (High to low)</option>
+                                    <option id="Search_LowtoHigh">Price (Low to High)</option>
+                                }
+                            </select>
+
+                        </th>
+
+                    </tr>
+                    </thead>
+                </table>
+    
+
+                @{
+                    if (!Model.Products_page.empty)
+                    {
+                        int i_products = 0;
+                        while (i_products < Model.Products_page.data.Items.Length)
+                        {
+                            <div class="card-columns">
+                                @for (int i = 0; i < 3; i++)
+                                {
+                                    if (i_products < Model.Products_page.data.Items.Length)
+                                    {
+                                        Product item = Model.Products_page.data.Items[i_products];
+                                        <div class="card">
+                                            <div onclick="location.href = 'Productinfo?id=@Model.Products_page.data.Items[i_products].ID';" style="cursor: pointer" id="Search_Image">
+                                                <img class="card-img-top" src="@Html.DisplayFor(modelItem => item.HeaderImage)" style="width: 100%; object-fit: cover; height: 200px;" alt="..." id="Search_ClickedImage">
+                                            </div>
+                                            <div class=" card-body">
+
+                                                <h6 class="display-5">@Html.DisplayFor(modelItem => item.ResponseName)</h6>
+                                                <!---<a href="Productinfo?id=Model.Products[i_products].ID" class="btn btn-primary">Product info</a>-->
+
+                                                <p>€ @Html.DisplayFor(modelItem => item.PriceFinal)</p>
+                                                @{
+                                                    if (Model.IsAdmin)
+                                                    {
+                                                        <a class="btn btn-primary" asp-page="/Admin/AdminEditProduct" asp-route-productid="@item.ID" id="Products_AdminEdit" title="Edit"><i class="fas fa-edit"></i></a>
+                                                        <a class="btn btn-danger" asp-page="/Admin/AdminDeleteProduct" asp-route-productid="@item.ID" id="Products_AdminDelete" title="Delete"><i class="fas fa-times"></i></a>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                    i_products++;
+                                }
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>Oops! There are no results.</p>
+                    }
+                }
+
+            </div>
+            <div class="row">
+
+                <nav aria-label="...">
+                    <ul class="pagination">
+                        @{
+                            if (Model.Products_page != null && Model.Products_page.empty == false && Model.Products_page.data.TotalPages > 1)
+                            {
+                                for (int i = 4; i > -4; i--)
+                                {
+                                    int page_index = Model.Products_page.data.Index - i;
+
+                                    if (page_index > -1 && page_index <= Model.Products_page.data.TotalPages)
+                                    {
+                                        <li class="page-item">
+                                            <a id="Search_Pagination_Pages" class="page-link" style="color:#16262E; border-color:#16262E !important;" href="search?search=@Model.Products_page.data.SearchQuery&page_size=50&page_index=@page_index@((Model._Adventure == "1") ? "&Adventure=1" : "")@((Model._Racing == "1") ? "&Racing=1" : "")@((Model._actie == "1") ? "&actie=1" : "")@((Model._Multiplayer == "1") ? "&Multiplayer=1" : "")@((Model._Max != null) ? "&max=" + Model._Max.ToString() : "")@((Model._Min != null) ? "&min=" + Model._Min : "")@((Model._order != null) ? "&order=" + Model._order : "")">
+                                                @page_index
+                                            </a>
+                                        </li>
+                                    }
+                                }
+                            }
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="js/CheckMinMaxFilter.js" />
+
+<style>
+
+
+    .container.body-content {
+        width: 100%;
+        padding-top: 20px !important;
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+        margin-left: 0px !important;
+        margin-right: 0px !important;
+    }
+
+    .card {
+        min-height: 300px;
+    }
+
+    .card-body {
+        min-height: 150px;
+    }
+
+    .container {
+        margin-top: 1.5rem !important;
+    }
+</style>

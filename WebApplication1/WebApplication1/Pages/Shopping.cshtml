@@ -1,0 +1,198 @@
+﻿@page
+@model ShoppingModel
+@{
+    ViewData["Title"] = "Shopping";
+
+}
+@*<h2>@ViewData["Title"]</h2>
+*@
+<div class="container">
+    <form method="get" asp-page-handler="page" onsubmit="return checkmin()">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card-plain">
+                    <article class="card-group-item">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <div class="filter-content">
+                            <div class="card-body">
+
+                                <input type="hidden" value="page" name="handler" />
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Min</label>
+                                        <input type="number" onchange="checkMinRealTime()" name="min" class="form-control" id="min" placeholder="€0" value="@(Model._Min != null ? @Model._Min : 0)">
+                                    </div>
+                                    <div class="form-group col-md-6 text-right">
+                                        <label>Max</label>
+                                        <input type="number" onchange="checkMinRealTime()" name="max" class="form-control" id="max" placeholder="€1,0000" value="@(Model._Max != null ? @Model._Max : 0)">
+                                    </div>
+                                    <input type="hidden" value="@if (!Model.Products_page.empty){@Model.Products_page.data.Index}" name="page_index" />
+                                    <input type="hidden" value="@Model.page_size" name="page_size" />
+                                </div>
+                                <input hidden type="text" value="" />
+                            </div> <!-- card-body.// -->
+                        </div>
+                    </article> <!-- card-group-item.// -->
+                    <article class="card-group-item">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Genre</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <div class="filter-content">
+                            <div class="card-body">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="Check1" name="Adventure" @(Model._Adventure == "1" ? "checked" : "") value="1">
+                                    <label class="custom-control-label" for="Check1">Adventure</label>
+                                </div> <!-- form-check.// -->
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="Check2" name="Racing" @(Model._Racing == "1" ? "checked" : "") value="1">
+                                    <label class="custom-control-label" for="Check2">Racing</label>
+                                </div> <!-- form-check.// -->
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="Check3" name="actie" @(Model._actie == "1" ? "checked" : "") value="1">
+                                    <label class="custom-control-label" for="Check3">Action</label>
+                                </div> <!-- form-check.// -->
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="Check4" name="Multiplayer" @(Model._Multiplayer == "1" ? "checked" : "") value="1">
+                                    <label class="custom-control-label" for="Check4">Multiplayer</label>
+                                </div> <!-- form-check.// -->
+                            </div> <!-- card-body.// -->
+                        </div>
+                    </article> <!-- card-group-item.// -->
+                    <button type="submit" class="btn btn-primary btn-sm btn-block">Filter out </button>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="text-align:right;">
+                                Order by :
+                                <select aria-labelledby="dropdownMenuButton" name="order" id="Products_OrderBy" onchange="this.form.submit()">
+
+                                    @if (Model._order == "Price (Low to High)")
+                                    {
+                                        <option id="Search_HightoLow">Price (High to low)</option>
+                                        <option id="Search_LowtoHigh" selected>Price (Low to High)</option>
+                                    } else
+                                    {
+                                        <option id="Search_HightoLow" selected>Price (High to low)</option>
+                                        <option id="Search_LowtoHigh">Price (Low to High)</option>
+                                    }
+                                </select>
+
+                            </th>
+
+                        </tr>
+                    </thead>
+                </table>
+
+                @{
+                    if (!Model.Products_page.empty)
+                    {
+                        int i_products = 0;
+                        while (i_products < Model.Products_page.data.Items.Length)
+                        {
+                            <div class="card-columns">
+                                @for (int i = 0; i < 3; i++)
+                                {
+                                    if (i_products < Model.Products_page.data.Items.Length)
+                                    {
+                                        Product item = Model.Products_page.data.Items[i_products];
+
+                                        <div class="card">
+                                            <div id="Products_Image" onclick="location.href = 'Productinfo?id=@Model.Products_page.data.Items[i_products].ID';" style="cursor: pointer">
+                                                <img id="Products_ClickedImage" class="card-img-top" src="@Html.DisplayFor(modelItem => item.HeaderImage)" style="width: 100%; object-fit: cover; height: 200px;" alt="...">
+                                            </div>
+                                            <div class="card-body">
+                                                <h6 class="display-5">@Html.DisplayFor(modelItem => item.ResponseName)</h6>
+                                                <p>€ @Html.DisplayFor(modelItem => item.PriceFinal)</p>
+                                                @{
+                                                    if (Model.IsAdmin)
+                                                    {                                                        
+                                                        <a class="btn btn-primary"  asp-page="/Admin/AdminEditProduct" asp-route-productid="@item.ID" id="Products_AdminEdit" title="Edit"><i class="fas fa-edit"></i></a>
+                                                        <a class="btn btn-danger" asp-page="/Admin/AdminDeleteProduct" asp-route-productid="@item.ID" id="Products_AdminDelete"  title="Read"><i class="fas fa-times"></i></a>
+                                                    }
+                                                }
+                                            </div>
+
+                                        </div>
+
+
+                                    }
+                                    i_products++;
+                                }
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>Oops! There are no results!</p>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="row">
+
+            <nav aria-label="..." style="text-align:center; margin:0 auto; color:#16262E; border-color:#16262E;">
+                <ul class="pagination" sstyle="color:#16262E; border-color:#16262E;">
+                    @{
+                        if (Model.Products_page.empty == false && Model.Products_page.data.TotalPages > 1)
+                        {
+                            for (int i = 4; i > -4; i--)
+                            {
+                                int page_index = Model.Products_page.data.Index - i;
+
+                                if (page_index > -1 && page_index <= Model.Products_page.data.TotalPages - 1 && page_index >= 0)
+                                {
+                                    <li class="page-item">
+                                        <a id="Products_Pagination_Pages" class="page-link" href="Shopping?handler=page&page_index=@page_index&page_size=50@((Model._Adventure == "1") ? "&Adventure=1" : "")@((Model._Racing == "1") ? "&Racing=1" : "")@((Model._actie == "1") ? "&actie=1" : "")@((Model._Multiplayer == "1") ? "&Multiplayer=1" : "")@((Model._Max != null) ? "&max=" + Model._Max.ToString() : "")@((Model._Min != null) ? "&min=" + Model._Min : "")@((Model._order != null) ? "&order=" + Model._order : "")">
+                                            @page_index
+                                        </a>
+                                    </li>
+                                }
+                            }
+                        }
+                    }
+                </ul>
+            </nav>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="js/CheckMinMaxFilter.js" />
+
+<style>
+
+
+    .container.body-content {
+        width:100%;
+        padding-top: 20px !important;
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+        margin-left: 0px !important;
+        margin-right: 0px !important;
+    }
+    .card {
+        min-height: 300px;
+    }
+    .card-body{
+        min-height:150px;
+    }
+
+    .container {
+        margin-top: 1.5rem !important;
+    }
+</style>

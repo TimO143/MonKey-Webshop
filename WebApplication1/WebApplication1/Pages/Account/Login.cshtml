@@ -1,0 +1,76 @@
+@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<div class="container" >
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-5">
+            <div class="card card-profile card-plain">
+
+                <div class="card-body" style="background-color:#16262E; color:white; min-height:50px!important;">
+                    <h6 class="card-category">LOGIN</h6>
+                </div>
+                <section style="width:90%; text-align:center; margin:0 auto; padding-top:20px; padding-bottom:20px;">
+                    <form method="post">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Input.Email"></label>
+                            <input asp-for="Input.Email" class="form-control" style="border-radius:50px;" />
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Input.Password"></label>
+                            <input asp-for="Input.Password" class="form-control" style="border-radius:50px;" />
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block" style="border-radius:50px;" id="LoginButton">Log in</button>
+                        </div>
+                            @*<div class="form-group">
+                                <div class="checkbox">
+                                    <label asp-for="Input.RememberMe">
+                                        <input asp-for="Input.RememberMe" />
+                                        @Html.DisplayNameFor(m => m.Input.RememberMe)
+                                    </label>
+                                </div>
+                            </div>*@
+                        <div class="form-group">
+                            <p>
+                                <a asp-page="./ConfirmEmailSend" id="Login_NewVerify">Send new verification email</a>
+                            <p>
+                        </div>
+                    </form>
+                </section>
+            </div>
+            <p style="text-align:center; padding-bottom:50px;">
+                <a asp-page="./ForgotPassword" id="Login_NewPassword">Forgot password</a> |  <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" id="Login_ToRegister">Register </a>
+            </p>
+        </div>
+        <div class="col"></div>
+
+    </div>
+    </div>
+
+<style>
+    .container {
+        margin-top: 1.5rem !important;
+    }
+
+    .card {
+        min-height: 300px;
+        
+    }
+
+    .card-body {
+        min-height: 150px;
+       
+    }
+</style>
+
+@section Scripts {
+    @await  Html.PartialAsync("_ValidationScriptsPartial")
+}

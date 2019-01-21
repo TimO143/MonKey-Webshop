@@ -1,0 +1,36 @@
+﻿@page
+@model ConfirmEmailSendModel
+
+
+<!DOCTYPE html>
+
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ConfirmEmailSend</title>
+</head>
+
+<div class="container">
+    <h4 style="margin-top:3em;">Enter your email for a new verification email</h4>
+    <div class="alert-success">@Model.StatusMessage</div>
+    <div class="row">
+        <div class="col">
+            <div class="col-md-4" style="margin-bottom:10em;">
+                <form method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Input.Email"></label>
+                        <input asp-for="Input.Email" class="form-control" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-default">Get New Verification Email</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

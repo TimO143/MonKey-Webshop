@@ -1,0 +1,181 @@
+﻿@page
+@model DiamondshopModel
+@{
+    ViewData["Title"] = "Diamond Shop";
+}
+<div class="container" style="margin-top:2rem;">
+    <div class="row">
+        <div class="col-md-12 text-center">
+
+            <h1 class="pulsate text-center">💎</h1>
+            <a class="navbar-brand pulsate pulse">MONKEY. <span class="navbar-brand" style="font-size:30px!important; color:#3796DE;">DIAMOND SHOP</span></a><br /><hr />
+            <p>
+                The Diamond Shop makes part of our point system, which is a method of distributing points to our registered users. It can be compared with a loot system.
+                With each purchase you make at MONKEY, you receive a handful of diamonds. These diamonds can be turned in for a discount on your next purchase or redeemed for a  free product.
+                <br /><br />
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4 text-center">
+            <div class="card card-plain">
+                <img class="card-img-top" src="https://cdn.uploadvr.com/wp-content/uploads/2017/11/skyrim-dragonborn-wallpaper-1200x675.jpg" alt="Card image cap">
+                <div class="card-body">
+                    <h4 class="card-title">Skyrim</h4>
+                    <p class="card-text">Your points: @Model._User.TPunten</p>
+                    <form method="post">
+
+                        <input type="hidden" name="email" value="@Model.EmailKey.Email" />
+                        <input type="hidden" name="firstname" value="@Model.EmailKey.Firstname" />
+                        <input type="hidden" name="lastname" value="@Model.EmailKey.Lastname" />
+
+                        <input type="hidden" name="productid" value="1348" />
+                        @if(Model._User.TPunten >= 250)
+                        { 
+                             <input type="submit" value="250 💎 " class="btn btn-primary btn-lg" role="button" id="Prodinf_AddToCart" onclick="this.disabled = true;this.form.submit()" />
+                        }
+                        else
+                        {
+                             <input type="submit" value="250 💎 " class="btn btn-primary btn-lg" role="button" id="Prodinf_AddToCart" onclick="this.disabled = true;this.form.submit()" disabled />
+                        }
+
+                        @*<a class="btn btn-primary">250 💎</a>*@
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4"></div>
+
+
+    </div>
+        
+
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <hr /><br /><br />
+                <div class="accordion" id="accordionExample">
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    How does it work?
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div class="card-body">
+                                The amount of diamonds you receive depend on your total purchase. We cut the the part after the period, so the amount of diamonds you receive are almost identical to the order total.  <br /><br />
+                                <hr />
+                                <b>Let's say your total cart value is €87,23, the amount of diamonds you receive is: 87</b>
+                                <hr />
+                            </div><br /><br />
+                            These diamonds can be used at your next purchase for a discount. The logic behind that is as follows:
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Points</th>
+                                        <th scope="col">Discount in €</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">100</th>
+                                        <td>5</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">200</th>
+                                        <td>15</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">300</th>
+                                        <td>30</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">400</th>
+                                        <td>49</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">500</th>
+                                        <td>73</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">600</th>
+                                        <td>101</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">700</th>
+                                        <td>133</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">800</th>
+                                        <td>169</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">900</th>
+                                        <td>209</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">1000</th>
+                                        <td>252</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+                </div>
+            </div>
+        
+
+        <style>
+            .pulsate {
+                font-size: 90px;
+                -webkit-animation: pulsate 3.5s ease-in-out infinite both;
+                animation: pulsate 3.5s ease-in-out infinite both;
+            }
+
+            .pulse {
+                font-size: 30px !important;
+            }
+
+            @@-webkit-keyframes pulsate {
+                0% {
+                    -webkit-transform: scale(1);
+                    transform: scale(1);
+                }
+
+                50% {
+                    -webkit-transform: scale(0.9);
+                    transform: scale(0.9);
+                }
+
+                100% {
+                    -webkit-transform: scale(1);
+                    transform: scale(1);
+                }
+            }
+
+            @@keyframes pulsate {
+                0% {
+                    -webkit-transform: scale(1);
+                    transform: scale(1);
+                }
+
+                50% {
+                    -webkit-transform: scale(0.9);
+                    transform: scale(0.9);
+                }
+
+                100% {
+                    -webkit-transform: scale(1);
+                    transform: scale(1);
+                }
+            }
+        </style>

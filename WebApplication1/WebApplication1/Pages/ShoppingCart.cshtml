@@ -1,0 +1,286 @@
+﻿@page
+@model WebApplication1.Pages.ShoppingCartModel
+@{
+
+    float total = 0;
+}
+<!--<h2>ShoppingCart</h2>-->
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>My Cart 🛒</h2>
+        </div>
+        <div class="col">
+            <a class="btn btn-success float-right" style="margin-top:10px; margin-bottom:10px; padding-left:15px;" asp-page="./Shopping" id="Cart_ToShopping">Continue Shopping</a>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model._Products)
+                {
+                    total = total += (item.product.PriceFinal * item.quantity);
+
+                    <tr>
+                        <td>
+                            <img src="@item.product.HeaderImage" style="width:170px; height:90px;" alt="" />
+                            @item.product.ResponseName
+                        </td>
+                        <td> € @item.product.PriceFinal</td>
+                        <td>
+                            @{ if (Model.YourCart != null)
+                                {
+                                    <form asp-page="deleteproduct" method="post" class="d-inline align-middle ">
+                                        <input type="hidden" name="id" value="@item.product.ID" />
+                                        <input type="hidden" name="cartid" value="@Model.YourCart.ID" />
+                                        <input type="submit" value="-" class="btn btn-light btn-sm" id="Cart_Decrease_Quantity" />
+                                    </form>
+                                    <span style="padding:1px 10px"> @item.quantity</span>
+                                    <form asp-page="ShoppingCartController" method="post" class="d-inline align-middle  ">
+                                        <input type="hidden" name="productid" value="@item.product.ID" />
+                                        <input type="hidden" name="WichPage" value="False"/>
+                                        <input type="submit" value="+" class="btn btn-light btn-sm" id="Cart_Add_Quantity" />
+
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-page="deleteproduct" method="post" class="d-inline align-middle ">
+                                        <input type="hidden" name="id" value="@item.product.ID" />
+                                        <input type="submit" value="-" class="btn btn-light btn-sm" id="Cart_Decrease_QuantityCookie" />
+                                    </form>
+                                    <span style="padding:1px 10px"> @item.quantity</span>
+                                    <form asp-page="ShoppingCartController" method="post" class="d-inline align-middle  ">
+                                        <input type="hidden" name="productid" value="@item.product.ID" />
+                                        <input type="submit" value="+" class="btn btn-light btn-sm" id="Cart_Add_QuantityCookie" />
+
+                                    </form>
+                                }
+                            }
+                        </td>
+                        <td>
+                            € @(item.product.PriceFinal * item.quantity)
+                        </td>
+                        <td>
+                            @{if (Model.YourCart != null)
+                                {
+                                    <form asp-page="deleteproduct" method="post" asp-page-handler="Deleteitem" id="OneTimeClick">
+                                        <input type="hidden" name="id1" value="@item.product.ID" />
+                                        <input type="hidden" name="cartid1" value="@Model.YourCart.ID" />
+                                        <!--<input type="submit" value="Delete from cart" class="btn-danger">-->
+                                        <button type="submit" id="DeleteProductUser" class="close float-lg-left" title="Remove this product" aria-label="Close" onclick="this.disabled = true;this.form.submit()"><span aria-hidden="true">&times;</span></button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-page="deleteproduct" method="post" asp-page-handler="Deleteitem">
+                                        <input type="hidden" name="id1" value="@item.product.ID" />
+                                        <!--<input type="submit" value="Delete from cart" class="btn-danger">-->
+                                        <button type="submit" id="Cart_DeleteProductCookie" class="close float-lg-left" title="Remove this product" aria-label="Close" onclick="this.disabled = true;this.form.submit()"><span aria-hidden="true">&times;</span></button>
+                                    </form>
+                                }
+                            }
+                        </td>
+                    </tr>
+                                }
+            </tbody>
+        </table>
+    </div>
+    <br /><br />
+
+    <div class="row">
+        <div class="col-md-6">
+            @*<button onclick="openPopup()">Spend Points!</button>*@
+        </div>
+
+        <div class="col-md-6" style="padding-bottom: 10px">
+            <h2>Cart total</h2>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>Total</th>
+                        <td> € @total</td>
+                    </tr>
+                </tbody>
+
+            </table>
+            <div class="row" style="float:right; padding-right:15px;">
+                @if (Model._Products.Count > 0)
+                {
+                    <form asp-page="deleteproduct" method="post" asp-page-handler="Deletecart">
+                        <input type="submit" value="Clear Cart" class="btn btn-danger" id="Cart_Clear_Cart" onkeypress="hidediv()" />&nbsp;&nbsp;
+                        @*<input type="submit" value="delete the whole cart" />*@
+                    </form>
+                    <a class="btn btn-primary float-right" asp-page="EmailForCheckout" id="Cart_Checkout">Proceed to Checkout</a>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+@*<div id="myPopup" class="overlay">   misschien nog handig voor later iets
+    <a href="javascript:void(0)" class="closebtn" onclick="closePopup()">&times;</a>
+    <div class="inner-overlay">
+
+        <div class="row" style="margin-bottom:50px;">
+            <div class="col">
+                <Label type="number" id="Points">Your Points: 0</label>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom:50px;">
+            <div class="col-3">
+               something
+            </div>
+            <div class="col-3">
+                <button>Should have something to buy</button>
+            </div>
+            <div class="col-3">
+                some stuff here
+            </div>
+            <div class="col-3">
+                <button>spend points here</button>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom:50px;">
+            <div class="col-3">
+                some stuff here
+            </div>
+            <div class="col-3">
+                <button>spend points here</button>
+            </div>
+            <div class="col-3">
+                some stuff here
+            </div>
+            <div class="col-3">
+                <button>spend points here</button>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom:50px;">
+            <div class="col-3">
+                some stuff here
+            </div>
+            <div class="col-3">
+                <button>spend points here</button>
+            </div>
+            <div class="col-3">
+                some stuff here
+            </div>
+            <div class="col-3">
+                <button>spend points here</button>
+            </div>
+        </div>
+    </div>
+</div>*@
+
+
+
+
+<style>
+    .container {
+        margin-top: 1.5em;
+    }
+
+    .border {
+        border-width: 1px !important
+    }
+</style>
+
+
+<script>
+    var popup = document.getElementById("myPopup");
+    /* Open when someone clicks on the Open */
+    function openPopup() {
+        popup.style.display = "block";
+        popup.style.width = "100%";
+    }
+
+    /* Close when someone clicks on the "x" symbol inside the overlay */
+    function closePopup() {
+       popup.style.display = "none";
+    }
+    // When the user clicks anywhere outside of the popup, close it
+    window.onclick = function (event) {
+        if (event.target == popup) {
+            popup.style.display = "none";
+        }
+    } 
+
+
+   
+</script>
+<style>
+     .overlay {
+        height: 100%;
+        width: 100%;
+        position: fixed;  
+        z-index: 1;  
+        left: 0;
+        top: 0;
+        background-color: rgb(0,0,0);  
+        background-color: rgba(0,0,0, 0.9);  
+        background-color: rgba(0,0,0,0.6);
+        overflow-x: hidden; 
+        display:none
+
+    }
+
+    .inner-overlay {
+        /* Height & width depends on how you want to reveal the overlay (see JS below) */
+        height: 90%;
+        width: 80%;
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 200px;
+        top: 50px;
+        /*background-color: rgb(0,0,0); /* Black fallback color */
+        /* background-color: rgba(0,0,0, 0.9); /* Black w/opacity */
+        background-color: rgba(255,255,255,0.6);
+        overflow-x: hidden; /* Disable horizontal scroll */
+        overflow-y:auto;
+        transition: 3.5s; /* 0.5 second transition effect to slide in or slide down the overlay (height or width, depending on reveal) */
+        border-radius: 8px;
+        /*animation: FadeIn 1s ease-in both */
+    }
+
+    .overlay-content {
+        position: relative;
+        top: 25%;
+        width: 100%;
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .overlay .closebtn {
+        position: absolute;
+        top: 30px;
+        right: 60px;
+        font-size: 60px;
+    }
+
+   
+
+    /*@@keyframes FadeIn {
+        0% {
+            opacity: 0;
+            -webkit-transform: translate3d(0,-100%,0);
+            transform: translate3d(0,-100%,0);
+        }
+
+        100% {
+            opacity: 1;
+            -webkit-transform: none;
+            transform: none;
+        }
+    }*/
+</style>

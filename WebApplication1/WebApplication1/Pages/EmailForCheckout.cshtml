@@ -1,0 +1,54 @@
+﻿@page
+@model WebApplication1.Pages.EmailForCheckoutModel
+@{
+    ViewData["Title"] = "Information check";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-5">
+            <div class="card card-profile card-plain">
+                <div class="card-body" style="background-color:#16262E; color:white; min-height:50px!important;">
+                    <h6 class="card-category">DETAILS</h6>
+                </div>
+                <section style="width:90%; text-align:center; margin:0 auto; padding-top:20px; padding-bottom:20px;">
+
+                    <form method="post">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label asp-for="Input.FirstName"></label>
+                                    <input asp-for="Input.FirstName" class="form-control" />
+                                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label asp-for="Input.LastName"></label>
+                                    <input asp-for="Input.LastName" class="form-control" />
+                                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label asp-for="Input.Email"></label>
+                                    <input asp-for="Input.Email" class="form-control" />
+                                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Proceed to checkout</button>
+                    </form>
+                    </section>
+            </div>
+        </div>
+        <div class="col"></div>
+
+    </div>
+    </div>
+@section Scripts {
+    @await  Html.PartialAsync("_ValidationScriptsPartial")
+}
